@@ -5,3 +5,5 @@ A utility module for converting the Python Pickle format to and from Erlang term
 
 Python pickles are binary representations of Python objects.
 See http://python.org/dev/peps/pep-0307/ for details.
+
+Basic support for all protocols attempt
