@@ -524,6 +524,15 @@ encode_term(Dict, Pickle, Encoder)
   when is_tuple(Dict), element(1, Dict) =:= dict ->
     encode_dict(Dict, Pickle, Encoder, dict);
 
+% unicode
+encode_term(#pickle_unicode{value = Unicode}, Pickle, #encoder{bin=true})
+  when is_binary(Unicode) ->
+    Len = byte_size(Unicode),
+    [<<$X, Len:32/integer-little, Unicode/binary>> | Pickle];
+encode_term(#pickle_unicode{}, _, #encoder{bin=false}) ->
+% TODO: implement this
+    throw(not_implemented);
+
 % long integers
 encode_term(Number, Pickle, _) when is_number(Number) ->
     Encoding = encode_long(Number, <<>>),
@@ -917,6 +926,7 @@ term_to_pickle_test_() ->
      ?_assertEqual(term_to_pickle(false), <<16#80, 2, 16#89, $.>>),
      ?_assertEqual(term_to_pickle(<<"test">>), <<16#80, 2, "U", 4, "test", $.>>),
      ?_assertEqual(term_to_pickle(big_string()), big_string_pickle()),
+     ?_assertEqual(term_to_pickle(#pickle_unicode{value = <<"hello">>}), <<16#80, 2, "X", 5, 0, 0, 0, "hello", $.>>),
      ?_assertEqual(term_to_pickle({}), <<16#80, 2, $), $.>>),
      ?_assertEqual(term_to_pickle({1}), <<16#80, 2, $K, 1, 16#85, $.>>),
      ?_assertEqual(term_to_pickle({1, 2}), <<16#80, 2, $K, 1, $K, 2, 16#86, $.>>),
