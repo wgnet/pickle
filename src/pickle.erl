@@ -40,7 +40,7 @@
 % state of stack machine which implements pickle protocol
 -record(mach, {
           stack=[] :: list(),
-          memo :: dict(),
+          memo :: dict:dict(),
           done=false :: boolean(),
           dict_module=dict :: dict_module()
          }).
@@ -437,7 +437,7 @@ set_items([{dictionary, Dict} | Stack], KeyVals, Mod) ->
 
 %% @private
 %% @doc Add the key-val pairs to the given dict. Return the new dict.
--spec update_dict(Dict::dict(), KeyVals::list(), Mod::dict_module()) -> NewStack::list().
+-spec update_dict(Dict::dict:dict(), KeyVals::list(), Mod::dict_module()) -> NewStack::list().
 update_dict(Dict, [], _Mod) ->
     Dict;
 update_dict(Dict, [Key, Val | KeyVals], Mod) ->
@@ -645,7 +645,7 @@ encode_list_txt([Term | List], Pickle, Encoder) ->
 
 %% @private
 %% @doc Add the encoding for a dictionary to the given iolist.
--spec encode_dict(Dict::dict(), Pickle::iolist(), Encoder::#encoder{}, Mod::dict | maps) -> iolist().
+-spec encode_dict(Dict::dict:dict(), Pickle::iolist(), Encoder::#encoder{}, Mod::dict | maps) -> iolist().
 encode_dict(Dict, Pickle, #encoder{bin=true} = Encoder, Mod) ->
     NewPickle = [$} | Pickle],
     case Mod:size(Dict) of
